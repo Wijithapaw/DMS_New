@@ -18,7 +18,7 @@ import {
   Input
 } from "reactstrap";
 
-import dashboardRoutes from "routes/dashboard.jsx";
+import dashboardRoutes from "routes/authenticated";
 
 class Header extends React.Component {
   constructor(props) {

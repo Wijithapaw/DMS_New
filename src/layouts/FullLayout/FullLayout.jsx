@@ -3,13 +3,12 @@ import React from "react";
 import PerfectScrollbar from "perfect-scrollbar";
 import { Route, Switch, Redirect } from "react-router-dom";
 
-import { Header, Footer, Sidebar } from "components";
-
-import dashboardRoutes from "routes/dashboard.jsx";
+import  { Sidebar, Header, Footer }  from "layouts/components";
+import authenticatedRoutes from "routes/authenticated";
 
 var ps;
 
-class Dashboard extends React.Component {
+class FullLayout extends React.Component {
   componentDidMount() {
     if (navigator.platform.indexOf("Win") > -1) {
       ps = new PerfectScrollbar(this.refs.mainPanel);
@@ -31,11 +30,11 @@ class Dashboard extends React.Component {
   render() {
     return (
       <div className="wrapper">
-        <Sidebar {...this.props} routes={dashboardRoutes} />
+        <Sidebar {...this.props} routes={authenticatedRoutes} />
         <div className="main-panel" ref="mainPanel">
           <Header {...this.props} />
           <Switch>
-            {dashboardRoutes.map((prop, key) => {
+            {authenticatedRoutes.map((prop, key) => {
               if (prop.collapse) {
                 return prop.views.map((prop2, key2) => {
                   return (
@@ -61,4 +60,4 @@ class Dashboard extends React.Component {
   }
 }
 
-export default Dashboard;
+export default FullLayout;

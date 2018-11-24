@@ -20,7 +20,6 @@ import { Line, Bar } from "react-chartjs-2";
 import { PanelHeader, Stats, CardCategory, Tasks } from "components";
 
 import {
-  dashboardPanelChart,
   dashboardShippedProductsChart,
   dashboardAllProductsChart,
   dashboard24HoursPerformanceChart
@@ -33,13 +32,7 @@ class Dashboard extends React.Component {
     return (
       <div>
         <PanelHeader
-          size="lg"
-          content={
-            <Line
-              data={dashboardPanelChart.data}
-              options={dashboardPanelChart.options}
-            />
-          }
+          size="sm"
         />
         <div className="content">
           <Row>
