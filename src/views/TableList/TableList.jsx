@@ -9,15 +9,12 @@ import {
   Col
 } from "reactstrap";
 
-import { PanelHeader } from "components";
-
 import { thead, tbody } from "variables/general";
 
 class RegularTables extends React.Component {
   render() {
     return (
       <div>
-        <PanelHeader size="sm" />
         <div className="content">
           <Row>
             <Col xs={12}>

@@ -2978,7 +2978,7 @@ Created using IcoMoon - icomoon.io
   .main-panel div > .content {
     padding: 0 30px 30px;
     min-height: calc(100vh - 123px);
-    margin-top: -30px; }
+    margin-top: 30px; }
   .main-panel > .navbar {
     margin-bottom: 0; }
   .main-panel .header {
@@ -3002,9 +3002,9 @@ Created using IcoMoon - icomoon.io
     -webkit-overflow-scrolling: touch; } }
 
 .panel-header {
-  height: 260px;
-  padding-top: 80px;
-  padding-bottom: 45px;
+  height: 60px;
+  padding-top: 40px;
+  padding-bottom: 25px;
   position: relative;
   background: #2c2c2c;
   /* fallback for old browsers */
@@ -3021,7 +3021,7 @@ Created using IcoMoon - icomoon.io
       color: #FFFFFF; }
 
 .panel-header-sm {
-  height: 135px; }
+  height: 60px; }
 
 .panel-header-lg {
   height: 380px; }

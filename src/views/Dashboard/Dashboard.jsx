@@ -17,7 +17,7 @@ import {
 import { Line, Bar } from "react-chartjs-2";
 // function that returns a color based on an interval of numbers
 
-import { PanelHeader, Stats, CardCategory, Tasks } from "components";
+import { Stats, CardCategory, Tasks } from "components";
 
 import {
   dashboardShippedProductsChart,
@@ -31,9 +31,9 @@ class Dashboard extends React.Component {
   render() {
     return (
       <div>
-        <PanelHeader
+        {/* <PanelHeader
           size="sm"
-        />
+        /> */}
         <div className="content">
           <Row>
             <Col xs={12} md={4}>

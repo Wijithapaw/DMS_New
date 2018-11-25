@@ -1,6 +1,6 @@
 import React from "react";
 
-class PanelHeader extends React.Component {
+class PageHeader extends React.Component {
   render() {
     return (
       <div
@@ -17,4 +17,4 @@ class PanelHeader extends React.Component {
   }
 }
 
-export default PanelHeader;
+export default PageHeader;

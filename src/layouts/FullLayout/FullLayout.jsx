@@ -6,6 +6,8 @@ import { Route, Switch, Redirect } from "react-router-dom";
 import  { Sidebar, Header, Footer }  from "layouts/components";
 import authenticatedRoutes from "routes/authenticated";
 
+import { PageHeader } from "layouts/components";
+
 var ps;
 
 class FullLayout extends React.Component {
@@ -33,6 +35,7 @@ class FullLayout extends React.Component {
         <Sidebar {...this.props} routes={authenticatedRoutes} />
         <div className="main-panel" ref="mainPanel">
           <Header {...this.props} />
+          <PageHeader size="sm" />
           <Switch>
             {authenticatedRoutes.map((prop, key) => {
               if (prop.collapse) {

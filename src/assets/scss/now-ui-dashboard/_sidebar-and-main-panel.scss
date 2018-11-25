@@ -352,7 +352,7 @@
     div > .content{
         padding: 0 30px 30px;
         min-height: calc(100vh - 123px);
-        margin-top: -30px;
+        margin-top: 30px;
     }
 
     > .navbar{
@@ -391,9 +391,9 @@
 }
 
 .panel-header {
-  height: 260px;
-  padding-top: 80px;
-  padding-bottom: 45px;
+  height: 60px;
+  padding-top: 40px;
+  padding-bottom: 25px;
   position: relative;
   @include panel-gradient($black-color);
 
@@ -415,7 +415,7 @@
 }
 
 .panel-header-sm{
-  height: 135px;
+  height: 60px;
 }
 
 .panel-header-lg{
