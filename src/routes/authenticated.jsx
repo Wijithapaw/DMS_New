@@ -1,6 +1,5 @@
-import Dashboard from "views/Dashboard/Dashboard.jsx";
-import TableList from "views/TableList/TableList.jsx";
-import UserPage from "views/UserPage/UserPage.jsx";
+import { Dashboard } from "modules/dashboard/components";
+import { UserManagement, UserDetails } from "modules/users/components";
 
 var dashRoutes = [
   {
@@ -10,16 +9,16 @@ var dashRoutes = [
     component: Dashboard
   },
   {
-    path: "/user-page",
-    name: "User Profile",
+    path: "/user-details",
+    name: "User Details",
     icon: "users_single-02",
-    component: UserPage
+    component: UserDetails
   },
   {
-    path: "/extended-tables",
-    name: "Table List",
+    path: "/user-management",
+    name: "Users",
     icon: "files_paper",
-    component: TableList
+    component: UserManagement
   },
   { redirect: true, path: "/", pathTo: "/dashboard", name: "Dashboard" }
 ];

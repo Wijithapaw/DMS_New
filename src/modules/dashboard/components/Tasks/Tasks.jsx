@@ -3,7 +3,7 @@ import { UncontrolledTooltip } from "reactstrap";
 // used for making the prop types of this component
 import PropTypes from "prop-types";
 
-import { Button, Checkbox } from "components";
+import { Button, Checkbox } from "modules/shared/components";
 
 class Task extends React.Component {
   render() {

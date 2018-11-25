@@ -1,10 +1,10 @@
 import React from "react";
 import { Card, CardHeader, CardBody, Row, Col } from "reactstrap";
 
-import { FormInputs } from "components";
+import { FormInputs } from "modules/shared/components";
 
 
-class User extends React.Component {
+class UserDetails extends React.Component {
   render() {
     return (
       <div>
@@ -142,4 +142,4 @@ class User extends React.Component {
   }
 }
 
-export default User;
+export default UserDetails;

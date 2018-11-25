@@ -11,7 +11,7 @@ import {
 
 import { thead, tbody } from "variables/general";
 
-class RegularTables extends React.Component {
+class UserManagement extends React.Component {
   render() {
     return (
       <div>
@@ -107,4 +107,4 @@ class RegularTables extends React.Component {
   }
 }
 
-export default RegularTables;
+export default UserManagement;
