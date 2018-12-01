@@ -1,4 +1,4 @@
-import React from "react";
+import * as React from "react";
 import { Link } from "react-router-dom";
 import {
   Collapse,
@@ -18,10 +18,19 @@ import {
   Input
 } from "reactstrap";
 
-import dashboardRoutes from "routes/authenticated";
+import dashboardRoutes from "src/routes/authenticated";
 
-class Header extends React.Component {
-  constructor(props) {
+export interface State {
+  isOpen: boolean;
+  dropdownOpen: boolean;
+  color: string;
+}
+
+class Header extends React.Component<any, State> {
+  
+  private sidebarBtn: React.RefObject<HTMLButtonElement>;
+
+  constructor(props: any) {
     super(props);
     this.state = {
       isOpen: false,
@@ -30,6 +39,8 @@ class Header extends React.Component {
     };
     this.toggle = this.toggle.bind(this);
     this.dropdownToggle = this.dropdownToggle.bind(this);
+
+    this.sidebarBtn = React.createRef();
   }
   toggle() {
     if (this.state.isOpen) {
@@ -45,7 +56,7 @@ class Header extends React.Component {
       isOpen: !this.state.isOpen
     });
   }
-  dropdownToggle(e) {
+  dropdownToggle() {
     this.setState({
       dropdownOpen: !this.state.dropdownOpen
     });
@@ -53,7 +64,7 @@ class Header extends React.Component {
   getBrand() {
     var name;
     dashboardRoutes.map((prop, key) => {
-      if (prop.collapse) {
+      if (prop.collapse && prop.views) {
         prop.views.map((prop, key) => {
           if (prop.path === this.props.location.pathname) {
             name = prop.name;
@@ -76,8 +87,8 @@ class Header extends React.Component {
     return name;
   }
   openSidebar() {
-    document.documentElement.classList.toggle("nav-open");
-    this.refs.sidebarToggle.classList.toggle("toggled");
+    document.documentElement && document.documentElement.classList.toggle("nav-open");
+    this.sidebarBtn && this.sidebarBtn.current && this.sidebarBtn.current.classList.toggle("toggled");
   }
   // function that adds color white/transparent to the navbar on resize (this is for the collapse)
   updateColor() {
@@ -94,14 +105,14 @@ class Header extends React.Component {
   componentDidMount() {
     window.addEventListener("resize", this.updateColor.bind(this));
   }
-  componentDidUpdate(e) {
+  componentDidUpdate(e: any) {
     if (
       window.innerWidth < 993 &&
       e.history.location.pathname !== e.location.pathname &&
-      document.documentElement.className.indexOf("nav-open") !== -1
+      document.documentElement && document.documentElement.className.indexOf("nav-open") !== -1
     ) {
       document.documentElement.classList.toggle("nav-open");
-      this.refs.sidebarToggle.classList.toggle("toggled");
+      this.sidebarBtn && this.sidebarBtn.current && this.sidebarBtn.current.classList.toggle("toggled");
     }
   }
   render() {
@@ -126,7 +137,7 @@ class Header extends React.Component {
             <div className="navbar-toggle">
               <button
                 type="button"
-                ref="sidebarToggle"
+                ref={this.sidebarBtn}
                 className="navbar-toggler"
                 onClick={() => this.openSidebar()}
               >
@@ -169,7 +180,7 @@ class Header extends React.Component {
               <Dropdown
                 nav
                 isOpen={this.state.dropdownOpen}
-                toggle={e => this.dropdownToggle(e)}
+                toggle={this.dropdownToggle}
               >
                 <DropdownToggle caret nav>
                   <i className="now-ui-icons location_world" />

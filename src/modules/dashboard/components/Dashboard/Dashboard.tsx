@@ -1,4 +1,4 @@
-import React from "react";
+import * as React from "react";
 import {
   Card,
   CardHeader,
@@ -13,21 +13,10 @@ import {
   DropdownItem,
   Table
 } from "reactstrap";
-// react plugin used to create charts
-import { Line, Bar } from "react-chartjs-2";
-// function that returns a color based on an interval of numbers
 
-import { Stats,  Tasks } from "modules/dashboard/components";
+import { Stats } from "src/modules/shared/components";
 
-import { CardCategory } from "modules/shared/components";
-
-import {
-  dashboardShippedProductsChart,
-  dashboardAllProductsChart,
-  dashboard24HoursPerformanceChart
-} from "variables/charts.jsx";
-
-import { tasks } from "variables/general.jsx";
+import { CardCategory } from "src/modules/shared/components";
 
 class Dashboard extends React.Component {
   render() {
@@ -59,10 +48,6 @@ class Dashboard extends React.Component {
                 </CardHeader>
                 <CardBody>
                   <div className="chart-area">
-                    <Line
-                      data={dashboardShippedProductsChart.data}
-                      options={dashboardShippedProductsChart.options}
-                    />
                   </div>
                 </CardBody>
                 <CardFooter>
@@ -101,10 +86,6 @@ class Dashboard extends React.Component {
                 </CardHeader>
                 <CardBody>
                   <div className="chart-area">
-                    <Line
-                      data={dashboardAllProductsChart.data}
-                      options={dashboardAllProductsChart.options}
-                    />
                   </div>
                 </CardBody>
                 <CardFooter>
@@ -114,7 +95,7 @@ class Dashboard extends React.Component {
                         i: "now-ui-icons arrows-1_refresh-69",
                         t: "Just Updated"
                       }
-                    ]}
+                    ]} 
                   </Stats>
                 </CardFooter>
               </Card>
@@ -127,10 +108,6 @@ class Dashboard extends React.Component {
                 </CardHeader>
                 <CardBody>
                   <div className="chart-area">
-                    <Bar
-                      data={dashboard24HoursPerformanceChart.data}
-                      options={dashboard24HoursPerformanceChart.options}
-                    />
                   </div>
                 </CardBody>
                 <CardFooter>
@@ -149,7 +126,7 @@ class Dashboard extends React.Component {
                   <CardTitle tag="h4">Tasks</CardTitle>
                 </CardHeader>
                 <CardBody>
-                  <Tasks tasks={tasks} />
+                 
                 </CardBody>
                 <CardFooter>
                   <hr />
@@ -171,7 +148,7 @@ class Dashboard extends React.Component {
                   <CardTitle tag="h4">Employees Stats</CardTitle>
                 </CardHeader>
                 <CardBody>
-                  <Table responsive>
+                  <Table>
                     <thead className=" text-primary">
                       <tr>
                         <th>Name</th>

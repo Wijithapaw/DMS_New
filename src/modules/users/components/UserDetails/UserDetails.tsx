@@ -1,7 +1,7 @@
-import React from "react";
+import * as React from "react";
 import { Card, CardHeader, CardBody, Row, Col } from "reactstrap";
 
-import { FormInputs } from "modules/shared/components";
+import { FormInputs } from "src/modules/shared/components";
 
 
 class UserDetails extends React.Component {

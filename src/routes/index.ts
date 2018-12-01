@@ -1,4 +1,4 @@
-import FullLayout from "layouts/FullLayout/FullLayout.jsx";
+import { FullLayout } from "src/layouts/components";
 
 var indexRoutes = [
     { 

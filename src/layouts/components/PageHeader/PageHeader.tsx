@@ -1,6 +1,11 @@
-import React from "react";
+import * as React from "react";
 
-class PageHeader extends React.Component {
+export interface Props {
+  size?: string;
+  content?: any;
+}
+
+class PageHeader extends React.Component<Props> {
   render() {
     return (
       <div

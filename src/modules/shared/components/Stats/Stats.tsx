@@ -1,8 +1,10 @@
-import React from "react";
-// used for making the prop types of this component
-import PropTypes from "prop-types";
+import * as React from "react";
 
-class Stats extends React.Component {
+export interface Props {
+  children: any[]
+}
+
+class Stats extends React.Component<Props> {
   render() {
     var stats = [];
     for (var i = 0; i < this.props.children.length; i++) {
@@ -15,9 +17,5 @@ class Stats extends React.Component {
     return <div className="stats">{stats}</div>;
   }
 }
-
-Stats.propTypes = {
-  children: PropTypes.array
-};
 
 export default Stats;

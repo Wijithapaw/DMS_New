@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import * as React from "react";
 import {
   FormGroup,
   Label,
@@ -6,11 +6,25 @@ import {
   InputGroup,
   InputGroupAddon
 } from "reactstrap";
-// used for making the prop types of this component
-import PropTypes from "prop-types";
 
-class FieldGroup extends React.Component {
-  constructor(props) {
+
+export interface FieldGroupProps {
+  label: string
+  addonLeft: any;
+  addonRight: any;
+  formGroupProps: any;
+  labelProps: any;
+  inputProps: any;
+  inputGroupProps: any;
+  inputGroupAddonProps: any;
+}
+
+interface State {
+  focus: boolean;
+}
+
+class FieldGroup extends React.Component<FieldGroupProps, State> {
+  constructor(props: FieldGroupProps) {
     super(props);
     this.state = {
       focus: false
@@ -80,7 +94,12 @@ class FieldGroup extends React.Component {
   }
 }
 
-export class FormInputs extends Component {
+export interface FormInputProps {
+  ncols: any[];
+  proprieties: any[]
+}
+
+export class FormInputs extends React.Component<FormInputProps> {
   render() {
     var row = [];
     for (var i = 0; i < this.props.ncols.length; i++) {
@@ -93,10 +112,5 @@ export class FormInputs extends Component {
     return <div className="row">{row}</div>;
   }
 }
-
-FormInputs.propTypes = {
-  ncols: PropTypes.arrayOf(PropTypes.string),
-  proprieties: PropTypes.arrayOf(PropTypes.object)
-};
 
 export default FormInputs;

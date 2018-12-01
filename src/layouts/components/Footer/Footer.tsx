@@ -1,9 +1,12 @@
-import React from "react";
+import * as React from "react";
 import { Container } from "reactstrap";
-// used for making the prop types of this component
-import PropTypes from "prop-types";
 
-class Footer extends React.Component {
+export interface Props {
+  default?: boolean;
+  fluid?: boolean;
+}
+
+class Footer extends React.Component<Props> {
   render() {
     return (
       <footer
@@ -24,7 +27,7 @@ class Footer extends React.Component {
             </ul>
           </nav>
           <div className="copyright">
-            &copy; {1900 + new Date().getYear()}, Designed by{" "}
+            &copy; {1900 + new Date().getFullYear()}, Designed by{" "}
             <a
               href="https://www.invisionapp.com"
               target="_blank"
@@ -45,10 +48,5 @@ class Footer extends React.Component {
     );
   }
 }
-
-Footer.propTypes = {
-  default: PropTypes.bool,
-  fluid: PropTypes.bool
-};
 
 export default Footer;

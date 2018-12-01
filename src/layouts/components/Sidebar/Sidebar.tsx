@@ -1,25 +1,35 @@
-import React from "react";
+import * as React from "react";
 import { NavLink } from "react-router-dom";
 import { Nav } from "reactstrap";
 // javascript plugin used to create scrollbars on windows
 import PerfectScrollbar from "perfect-scrollbar";
 
 import logo from "logo-white.svg";
+import { RouteNode } from 'src/routes/authenticated';
 
-var ps;
+var ps: any;
 
-class Sidebar extends React.Component {
-  constructor(props) {
+export interface Props {
+  location?: any,
+  routes: RouteNode[]
+}
+
+class Sidebar extends React.Component<Props> {
+
+  private sideBarDiv: React.RefObject<HTMLDivElement>;
+
+  constructor(props: Props) {
     super(props);
     this.activeRoute.bind(this);
+    this.sideBarDiv = React.createRef();
   }
   // verifies if routeName is the one active (in browser input)
-  activeRoute(routeName) {
+  activeRoute(routeName: string) {
     return this.props.location.pathname.indexOf(routeName) > -1 ? "active" : "";
   }
   componentDidMount() {
-    if (navigator.platform.indexOf("Win") > -1) {
-      ps = new PerfectScrollbar(this.refs.sidebar, {
+    if (navigator.platform.indexOf("Win") > -1 && this.sideBarDiv.current) {
+      ps = new PerfectScrollbar(this.sideBarDiv.current, {
         suppressScrollX: true,
         suppressScrollY: false
       });
@@ -49,7 +59,7 @@ class Sidebar extends React.Component {
             React-Bolerplate
           </a>
         </div>
-        <div className="sidebar-wrapper" ref="sidebar">
+        <div className="sidebar-wrapper" ref={this.sideBarDiv}>
           <Nav>
             {this.props.routes.map((prop, key) => {
               if (prop.redirect) return null;

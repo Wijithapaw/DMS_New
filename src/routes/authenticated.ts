@@ -1,7 +1,19 @@
-import { Dashboard } from "modules/dashboard/components";
-import { UserManagement, UserDetails } from "modules/users/components";
+import { Dashboard } from "src/modules/dashboard/components";
+import { UserManagement, UserDetails } from "src/modules/users/components";
 
-var dashRoutes = [
+export interface RouteNode {
+  path: string;
+  pathTo?: string;
+  name?: string;
+  icon?: string;
+  component?: any;
+  collapse?: boolean;
+  redirect?: boolean;
+  views?: RouteNode[];
+  pro?: boolean;
+}
+
+var dashRoutes: RouteNode[] = [
   {
     path: "/dashboard",
     name: "Dashboard",
@@ -23,3 +35,4 @@ var dashRoutes = [
   { redirect: true, path: "/", pathTo: "/dashboard", name: "Dashboard" }
 ];
 export default dashRoutes;
+
