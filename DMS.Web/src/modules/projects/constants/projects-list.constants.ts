@@ -1,0 +1,2 @@
+export const LOAD_PROJECT_LIST = "LOAD_PROJECT_LIST";
+export type LOAD_PROJECT_LIST = typeof LOAD_PROJECT_LIST;
