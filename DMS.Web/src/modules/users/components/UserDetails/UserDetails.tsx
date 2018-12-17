@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Card, CardHeader, CardBody, Row, Col } from "reactstrap";
+import { Card, CardHeader, CardBody } from "reactstrap";
 
 import { FormInputs } from "src/modules/shared/components";
 
@@ -7,10 +7,6 @@ import { FormInputs } from "src/modules/shared/components";
 class UserDetails extends React.Component {
   render() {
     return (
-      <div>
-        <div className="content">
-          <Row>
-            <Col xs={12}>
               <Card>
                 <CardHeader>
                   <h5 className="title">Edit Profile</h5>
@@ -134,10 +130,6 @@ class UserDetails extends React.Component {
                   </form>
                 </CardBody>
               </Card>
-            </Col>
-          </Row>
-        </div>
-      </div>
     );
   }
 }

@@ -6,6 +6,11 @@ import { Provider } from "react-redux";
 
 import "bootstrap/dist/css/bootstrap.css";
 import "assets/scss/now-ui-dashboard.css";
+
+import "primereact/resources/themes/nova-light/theme.css";
+import "primereact/resources/primereact.min.css";
+import "primeicons/primeicons.css";
+
 import "assets/css/demo.css";
 
 import indexRoutes from "./routes";

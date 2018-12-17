@@ -22,7 +22,6 @@ class Dashboard extends React.Component {
   render() {
     return (
       <div>
-        <div className="content">
           <Row>
             <Col xs={12} md={4}>
               <Card className="card-chart">
@@ -194,7 +193,6 @@ class Dashboard extends React.Component {
               </Card>
             </Col>
           </Row>
-        </div>
       </div>
     );
   }
