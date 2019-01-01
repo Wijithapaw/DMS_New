@@ -1,26 +1,21 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using DMS.Domain.Dtos;
-using DMS.Domain.Services;
-using Microsoft.AspNetCore.Authorization;
 using DMS.Domain.Dtos.Account;
 using DMS.Domain.Dtos.User;
+using DMS.Domain.Services.Identity;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
 
 namespace DMS.WebApi.Controllers
 {
-    
+
     [Authorize]
     [Produces("application/json")]
     [Route("api/Account")]
     public class AccountController : Controller
     {
-        IAccountService _accountService;
+        IIdentityService _accountService;
 
-        public AccountController(IAccountService accountService)
+        public AccountController(IIdentityService accountService)
         {
             _accountService = accountService;
         }
@@ -29,15 +24,15 @@ namespace DMS.WebApi.Controllers
         [HttpPost("Register")]
         public async Task<int> RegisterUser(UserDto userDto)
         {
-            var id = await _accountService.RegisterUser(userDto);
+            var id = await _accountService.RegisterUserAsync(userDto);
             return id;
         }
 
         [AllowAnonymous]
         [HttpPost("Login")]
-        public async Task<AuthToken> Login([FromBody] LoginDto loginDto)
+        public async Task<AuthResultDto> Login([FromBody] LoginCredentialsDto loginDto)
         {
-            var authToken = await _accountService.CreateToken(loginDto);
+            var authToken = await _accountService.AuthenticateAsync(loginDto);
             return authToken;
         }
        

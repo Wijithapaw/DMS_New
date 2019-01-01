@@ -1,21 +1,21 @@
-﻿using DMS.Domain.Services;
+﻿using DMS.Data;
+using DMS.Domain;
+using DMS.Domain.CustomExceptions;
+using DMS.Domain.Dtos.Project;
+using DMS.Domain.Entities;
+using DMS.Domain.Services;
+using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
-using DMS.Data.Entities;
-using DMS.Data;
-using DMS.Domain.Dtos;
 using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
-using DMS.Domain.Dtos.Project;
-using DMS.Utills.CustomExceptions;
 
 namespace DMS.Services
 {
     public class ProjectsService : IProjectsService
     {
-        private DataContext _dataContext;
+        private IDataContext _dataContext;
 
-        public ProjectsService(DataContext dataContext)
+        public ProjectsService(IDataContext dataContext)
         {
             _dataContext = dataContext;
         }
@@ -26,9 +26,9 @@ namespace DMS.Services
             {
                 Title = projectDto.Title,
                 Description = projectDto.Description,
-                ProjectCategoryId = projectDto.ProjectCategoryId,
+                ProjectOwnerId = projectDto.OwnerId,
                 StartDate = projectDto.StartDate,
-                EndDate = projectDto.EndDate                
+                EndDate = projectDto.EndDate         
             };
 
             _dataContext.Projects.Add(project);
@@ -56,8 +56,6 @@ namespace DMS.Services
                         Id = p.Id,
                         Title = p.Title,
                         Description = p.Description,
-                        ProjectCategoryId = p.ProjectCategoryId,
-                        ProjectCategory = p.ProjectCategory.Title,
                         StartDate = p.StartDate,
                         EndDate = p.EndDate,
                         RowVersion = p.RowVersion
@@ -74,29 +72,9 @@ namespace DMS.Services
                         Id = p.Id,
                         Title = p.Title,
                         Description = p.Description,
-                        ProjectCategoryId = p.ProjectCategoryId,
-                        ProjectCategory = p.ProjectCategory.Title,
                         StartDate = p.StartDate,
                         EndDate = p.EndDate
                     }).ToListAsync();
-
-            return projects;
-        }
-
-        public async Task<ICollection<ProjectDto>> GetAllAsync(string category)
-        {
-            var projects = await _dataContext.Projects
-                    .Where(p => p.ProjectCategory.Title == category)
-                     .Select(p => new ProjectDto
-                     {
-                         Id = p.Id,
-                         Title = p.Title,
-                         Description = p.Description,
-                         ProjectCategoryId = p.ProjectCategoryId,
-                         ProjectCategory = p.ProjectCategory.Title,
-                         StartDate = p.StartDate,
-                         EndDate = p.EndDate
-                     }).ToListAsync();
 
             return projects;
         }
@@ -110,7 +88,6 @@ namespace DMS.Services
 
             project.Title = dto.Title;
             project.Description = dto.Description;
-            project.ProjectCategoryId = dto.ProjectCategoryId;
             project.StartDate = dto.StartDate;
             project.EndDate = dto.EndDate;
             project.RowVersion = dto.RowVersion;

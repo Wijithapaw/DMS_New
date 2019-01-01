@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using DMS.Domain.Dtos.User;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 
 namespace DMS.WebApi.Controllers
 {
@@ -12,10 +13,18 @@ namespace DMS.WebApi.Controllers
     [Route("api/Users")]
     public class UsersController : Controller
     {
+        private readonly ILogger<UsersController> _logger;
+
+        public UsersController(ILogger<UsersController> logger)
+        {
+            _logger = logger;
+        }
+
         // GET: api/Users
         [HttpGet]
         public IEnumerable<UserSDto> Get()
         {
+            _logger.LogInformation("Getting users");
             var users = new List<UserSDto>
             {
                 new UserSDto { Id = 1, FirstName = "Wijitha", LastName = "Wijenayake", Email = "wijitha@yopmail.com", Active = true },
@@ -30,6 +39,7 @@ namespace DMS.WebApi.Controllers
         [HttpGet("{id}")]
         public string Get(int id)
         {
+            _logger.LogInformation("Getting user id: {0}", id);
             return "value";
         }
         

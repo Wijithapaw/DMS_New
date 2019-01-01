@@ -1,50 +1,38 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using DMS.Data;
+using DMS.Domain;
+using DMS.Domain.ConfigSettings;
+using DMS.Domain.Entities.Identity;
+using DMS.Domain.Services;
+using DMS.Domain.Services.Identity;
+using DMS.Services;
+using DMS.Services.Identity;
+using DMS.WebApi.Authorization;
+using DMS.WebApi.Middlewares;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using DMS.Domain.Services;
-using DMS.Services;
-using DMS.Domain;
-using DMS.Data;
-using Microsoft.EntityFrameworkCore;
-using DMS.Data.Entities;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.IdentityModel.Tokens;
-using System.Text;
-using DMS.WebApi.ErrorHandling;
-using Microsoft.AspNetCore.Http;
-using DMS.Utills;
-using DMS.WebApi.Utills;
-using DMS.Utills.CustomClaims;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authentication;
-using System.Net;
-using DMS.WebApi.AuthRequirements;
-using Microsoft.AspNetCore.Authorization;
-using DMS.Utills.ConfigSettings;
 using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
+using System;
+using System.Net;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace DMS.WebApi
 {
     public class Startup
     {
-        public Startup(IHostingEnvironment env)
+        public Startup(IConfiguration configuration)
         {
-            var builder = new ConfigurationBuilder()
-                .SetBasePath(env.ContentRootPath)
-                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-                .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
-                .AddEnvironmentVariables();
-            Configuration = builder.Build();
+            Configuration = configuration;
         }
 
-        public IConfigurationRoot Configuration { get; }
+        public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -54,7 +42,7 @@ namespace DMS.WebApi
             services.AddDbContext<DataContext>(options =>
               options.UseSqlServer(Configuration.GetConnectionString("DataContext")));
 
-            services.AddIdentity<ApplicationUser, ApplicationRole>()
+            services.AddIdentity<User, Role>()
                 .AddEntityFrameworkStores<DataContext>()
                 .AddDefaultTokenProviders();
 
@@ -111,46 +99,31 @@ namespace DMS.WebApi
                 options.User.RequireUniqueEmail = true;
             });
 
-            services.AddAuthorization(options =>
-            {
-                options.AddPolicy("ManageProjects",
-                    policy => policy.Requirements.Add(new ManageProjectRequirement()));
+            services.AddSingleton<IAuthorizationPolicyProvider, ClaimAuthorizationPolicyProvider>();
 
-                options.AddPolicy("ManageAccounts",
-                    policy => policy.Requirements.Add(new ManageAccountsRequirment()));
-
-                options.AddPolicy("ManageSystemSettings",
-                   policy => policy.Requirements.Add(new ManageSystemSettingsRequirment()));
-            });
-
-            services.AddSingleton<IAuthorizationHandler, ManageAccountsHandler>();
-            services.AddSingleton<IAuthorizationHandler, ManageSystemSettingsHandler>();
-            services.AddSingleton<IAuthorizationHandler, ManageProjectHandler>();
-
-            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-            services.AddScoped<IEnvironmentDescriptor, WebEnvironmentDescriptor>();
-            services.AddTransient<IProjectsService, ProjectsService>();
-            services.AddTransient<IProjectCategoryService, ProjectCategoryService>();
-            services.AddTransient<IAccountService, AccountService>();
+            services.AddScoped<IRequestContext, RequestContext>();
+            services.AddScoped<IProjectsService, ProjectsService>();
+            services.AddScoped<IIdentityService, IdentityService>();
 
             services.Configure<CorsSettings>(Configuration.GetSection("CorsSettings"));
             services.Configure<JwtSettings>(Configuration.GetSection("JwtSettings"));
             services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
+            services.Configure<SeedDataSettings>(Configuration.GetSection("SeedDataSettings"));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, 
             IHostingEnvironment env, 
-            ILoggerFactory loggerFactory, 
-            DataContext context, 
-            UserManager<ApplicationUser> userManager, 
-            RoleManager<ApplicationRole> roleManager,
             IOptions<CorsSettings> corsSettings)
         {
-            loggerFactory.AddConsole(Configuration.GetSection("Logging"));
-            loggerFactory.AddDebug();
+            if (env.IsDevelopment())
+            {
+                app.UseDeveloperExceptionPage();
+            }
 
             app.UseMiddleware<ErrorHandlingMiddleware>();
+
+            app.UseMiddleware<ErrorLoggingMiddleware>();
 
             app.UseCors(builder =>
                 builder.WithOrigins(corsSettings.Value.Origin)
@@ -160,10 +133,9 @@ namespace DMS.WebApi
 
             app.UseAuthentication();
 
-            app.UseMvc();
+            app.UseMiddleware<RequestContextResolveMiddleware>();
 
-            //Apply any pending migrations
-            DbInitializer.Initialize(context, userManager, roleManager);
+            app.UseMvc();
         }
     }
 }

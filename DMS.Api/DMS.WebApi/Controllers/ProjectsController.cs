@@ -44,12 +44,6 @@ namespace DMS.WebApi.Controllers
             return project;
         }
 
-        [HttpGet("GetByCategory")]
-        public async Task<IEnumerable<ProjectDto>> Get([FromQuery] string category)
-        {
-            var projectsList = await _projectsService.GetAllAsync(category);
-            return projectsList;
-        }        
 
         // POST api/values
         [HttpPost]

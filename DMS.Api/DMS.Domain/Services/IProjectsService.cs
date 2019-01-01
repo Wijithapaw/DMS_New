@@ -15,8 +15,6 @@ namespace DMS.Domain.Services
 
         Task<ICollection<ProjectDto>> GetAllAsync();
 
-        Task<ICollection<ProjectDto>> GetAllAsync(string category);
-
         Task UpdateAsync(ProjectDto project);
     }
 }

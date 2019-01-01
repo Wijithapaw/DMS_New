@@ -1,63 +1,89 @@
-﻿using Microsoft.EntityFrameworkCore;
-using DMS.Data.Entities;
-using System.Linq;
-using System;
-using DMS.Utills;
+﻿using DMS.Domain;
+using DMS.Domain.Entities;
+using DMS.Domain.Entities.Identity;
+using DMS.Domain.Entities.Base;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
+using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Identity;
+using DMS.Domain.Entities.System;
+using System.Linq.Expressions;
+using Remotion.Linq.Parsing.ExpressionVisitors;
 
 namespace DMS.Data
 {
-    public class DataContext : IdentityDbContext<ApplicationUser, ApplicationRole, int>
+    public class DataContext : IdentityDbContext<User, Role, int>, IDataContext
     {
-        IEnvironmentDescriptor _env;
+        IRequestContext _requestContext;
 
-        public DataContext(DbContextOptions<DataContext> options) : base (options)
+        public DataContext(DbContextOptions<DataContext> options) : base (options) { }
+
+        public DataContext(DbContextOptions<DataContext> options, IRequestContext requestContext) : base(options)
         {
-            
+            _requestContext = requestContext;
         }
 
-        public DataContext(DbContextOptions<DataContext> options, IEnvironmentDescriptor env) : base(options)
-        {
-            _env = env;
-        }
+        #region Entities
 
+        public DbSet<RefreshToken> RefreshTokens { get; set; }
+        public DbSet<LookupHeader> LookupHeaders { get; set; }
+        public DbSet<Lookup> Lookups { get; set; }
         public DbSet<Project> Projects { get; set; }
-
-        public DbSet<ProjectCategory> ProjectCategories { get; set; }
-
         public DbSet<Donee> Donees { get; set; }
+
+        #endregion
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
 
-            builder.Entity<ProjectCategory>()
-                .HasIndex(c => c.Title)
+            builder.Model.GetEntityTypes()
+                .Where(entityType => typeof(ISoftDeletableEntity).IsAssignableFrom(entityType.ClrType))
+                .ToList()
+                .ForEach(entityType =>
+                {
+                    builder.Entity(entityType.ClrType)
+                    .HasQueryFilter(ConvertFilterExpression<ISoftDeletableEntity>(e => e.Deleted == 0, entityType.ClrType));
+                });
+
+            builder.Entity<LookupHeader>()
+                .HasIndex(c =>  new { c.Code, c.Deleted })
                 .IsUnique(true);
 
-            // Customize the ASP.NET Identity model and override the defaults if needed.
-            // For example, you can rename the ASP.NET Identity table names and more.
-            // Add your customizations after calling base.OnModelCreating(builder);
+            builder.Entity<Lookup>()
+                .HasIndex(c => new { c.HeaderId, c.Code, c.Deleted })
+                .IsUnique(true);
+
+            builder.Entity<User>().ToTable("Users");
+            builder.Entity<Role>().ToTable("Roles");
+            builder.Entity<IdentityUserRole<int>>().ToTable("UserRoles");
+            builder.Entity<IdentityUserLogin<int>>().ToTable("UserLogins");
+            builder.Entity<IdentityRoleClaim<int>>().ToTable("RoleClaims");
+            builder.Entity<IdentityUserClaim<int>>().ToTable("UserClaims");
+            builder.Entity<IdentityUserToken<int>>().ToTable("UserTokens");
         }
 
         public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default(CancellationToken))
         {
-            if (_env != null)
+            if (_requestContext != null)
             {
-                foreach (var entry in this.ChangeTracker.Entries<BaseEntity>().Where(e => e.State == EntityState.Added))
+                foreach (var entry in ChangeTracker.Entries<IAuditedEntity>().Where(e => e.State == EntityState.Added))
                 {
-                    entry.Entity.CreatedBy = _env.UserId;
-                    entry.Entity.CreatedDate = DateTime.UtcNow;
+                    entry.Entity.CreatedBy = entry.Entity.LastUpdatedBy = _requestContext.UserId;
+                    entry.Entity.CreatedDateUtc = entry.Entity.LastUpdatedDateUtc = DateTime.UtcNow;
                 }
 
-                foreach (var entry in this.ChangeTracker.Entries<BaseEntity>().Where(e => e.State == EntityState.Modified))
+                foreach (var entry in ChangeTracker.Entries<IAuditedEntity>().Where(e => e.State == EntityState.Modified))
                 {
-                    entry.Entity.LastUpdatedBy = _env.UserId;
-                    entry.Entity.LastUpdatedDate = DateTime.UtcNow;
+                    entry.Entity.LastUpdatedBy = _requestContext.UserId;
+                    entry.Entity.LastUpdatedDateUtc = DateTime.UtcNow;
+                }
 
+                foreach (var entry in ChangeTracker.Entries<IConcurrencyHandledEntity>().Where(e => e.State == EntityState.Modified))
+                {
                     entry.Property("RowVersion").OriginalValue = entry.Entity.RowVersion;
                 }
             }
@@ -65,26 +91,14 @@ namespace DMS.Data
             return base.SaveChangesAsync(cancellationToken);
         }
 
-        public override int SaveChanges()
+        private static LambdaExpression ConvertFilterExpression<TInterface>(
+                            Expression<Func<TInterface, bool>> filterExpression,
+                            Type entityType)
         {
-            if (_env != null)
-            {
-                foreach (var entry in this.ChangeTracker.Entries<BaseEntity>().Where(e => e.State == EntityState.Added))
-                {
-                    entry.Entity.CreatedBy  = _env.UserId;
-                    entry.Entity.CreatedDate  = DateTime.UtcNow;
-                }
+            var newParam = Expression.Parameter(entityType);
+            var newBody = ReplacingExpressionVisitor.Replace(filterExpression.Parameters.Single(), newParam, filterExpression.Body);
 
-                foreach (var entry in this.ChangeTracker.Entries<BaseEntity>().Where(e => e.State == EntityState.Modified))
-                {
-                    entry.Entity.LastUpdatedBy = _env.UserId;
-                    entry.Entity.LastUpdatedDate = DateTime.UtcNow;
-
-                    entry.Property("RowVersion").OriginalValue = entry.Entity.RowVersion;
-                }
-            }
-            return base.SaveChanges();
+            return Expression.Lambda(newBody, newParam);
         }
-
     }
 }
